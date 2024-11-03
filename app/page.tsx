@@ -134,7 +134,7 @@ export default function Home() {
         htmlFor="terms"
         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
       >
-        Accept terms and conditions
+        Accept terms and 
       </label>
     </div>
       <Calendar
