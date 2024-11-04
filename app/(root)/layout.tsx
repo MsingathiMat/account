@@ -9,9 +9,15 @@ import { MttModeToggler } from '@/components/mtt/components/MttModeToggler'
 import AvatarAction from '@/components/mtt/components/mttAvatar/AvatarAction'
 import AvatarLogout from '@/components/mtt/components/mttAvatar/AvatarLogout'
 import MttAvatar from '@/components/mtt/components/mttAvatar/MttAvatar'
+import useActiveUser from '@/components/mtt/Hooks/useActiveUser'
+import { ActiveUserType } from '@/components/mtt/Types/MttTypes'
 
 
-const layout = ({children}:{children:Readonly<React.ReactNode>}) => {
+const Layout = ({children}:{children:Readonly<React.ReactNode>}) => {
+ 
+
+ const {userData} = useActiveUser<ActiveUserType>() 
+
  
   const AvatarItems = [
     <AvatarAction key={0} label="Action" actionMethod={()=>{alert("Action")}}/>,
@@ -22,7 +28,7 @@ const layout = ({children}:{children:Readonly<React.ReactNode>}) => {
       
    
 <div className=' relative min-h-screen mtt-center !items-start  w-full h-full flex-1 '>
-<MttNav type="DESKTOP" />
+<MttNav  type="DESKTOP" />
 
 <div className=' flex-1 pl-[40px] w-full  h-full mtt-center !flex-col  min-h-screen'>
 
@@ -31,8 +37,18 @@ const layout = ({children}:{children:Readonly<React.ReactNode>}) => {
 <MttNavSwitch />
 </div>
 
+{
+  userData?.activeImagePath?
+  
+  
+  <div className=' mtt-center gap-1'>
+    <MttAvatar  title="User" AvatarItems={AvatarItems} user={{imageSrc:userData?.activeImagePath}}/>
 
-<MttAvatar  title="User" AvatarItems={AvatarItems} user={{imageSrc:'/me.jpg'}}/>
+    <p>{userData?.activeName}</p>
+  </div>
+  :null
+}
+
 <MttModeToggler/>
 
 <MttSideNavToggler/>
@@ -53,4 +69,4 @@ const layout = ({children}:{children:Readonly<React.ReactNode>}) => {
   )
 }
 
-export default layout
+export default Layout

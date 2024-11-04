@@ -1,4 +1,4 @@
-import { CalendarCog, LayoutDashboard, ListTodo, Music2Icon, User } from "lucide-react";
+import { Building2, CalendarCog, FileText, LayoutDashboard, ListTodo, Music2Icon, User } from "lucide-react";
 
 const basePath = "/dashboard";
 
@@ -23,9 +23,23 @@ export const MttNavItems = [
   },
   {
     icon: <CalendarCog />,
-    path: "/events",
-    label: "Events",
+    path: "/chat",
+    label: "Chat",
+    basePath,
+  },
+  {
+    icon: <FileText />,
+    path: "/quote",
+    label: "Quote",
+    basePath,
+  },
+  {
+    icon: <Building2 />,
+    path: "/company",
+    label: "Company",
     basePath,
   },
 ];
+
+
 

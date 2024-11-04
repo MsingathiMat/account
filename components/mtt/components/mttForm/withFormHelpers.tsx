@@ -9,7 +9,7 @@ import ConvertToFormData from "../../Helpers/ConvertToFormData";
 
 import { ActiveUserType, FormHelperProps } from "../../Types/MttTypes";
 import useMttMedia from "./mttMedia/useMttMedia";
-import IsLoading from "../../Isloading";
+import IsLoading from "../Isloading";
 
 const withFormHelpers = <T extends object>(
   OriginalComponent: React.ComponentType<T & { FormHelpers: FormHelperProps }>

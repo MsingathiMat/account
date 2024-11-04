@@ -1,8 +1,8 @@
 
 
 export const QueryModels = {
-  User: {
-    QueryKey: "User",
+  Companies: {
+    QueryKey: "Company",
   },
   Artist: {
     QueryKey: "Artist",
@@ -19,9 +19,9 @@ export const QueryModels = {
 };
 
 export const MutationModels = {
-  User: {
-    MutationKey: "mtUser",
-    Dependants: QueryModels.User.QueryKey,
+  Companies: {
+    MutationKey: "mtCompany",
+    Dependants:[QueryModels.Companies.QueryKey],
   },
   Artist: {
     MutationKey: "mtArtist",

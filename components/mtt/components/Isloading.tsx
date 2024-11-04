@@ -5,6 +5,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import Loader from './Loader'
 
+
 function IsLoading({children, size, isLoading,className}:{children:React.ReactNode,size?:number, isLoading:boolean,className?:string}) {
   
   

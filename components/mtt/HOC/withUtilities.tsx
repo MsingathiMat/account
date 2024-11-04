@@ -9,8 +9,8 @@ import { useMttFetch } from "../Api/Mttfetch";
 import useMttMedia from "../components/mttForm/mttMedia/useMttMedia";
 import useActiveUser from "../Hooks/useActiveUser";
 import ConvertToFormData from "../Helpers/ConvertToFormData";
-import IsLoading from "../Isloading";
-
+import IsLoading from "../components/Isloading";
+import { Prisma } from "@prisma/client";
 const withUtilities = <T extends object>(
   OriginalComponent: React.ComponentType<T & { Utilities: UtilitiesProp }>
 ) => {
@@ -22,6 +22,7 @@ const withUtilities = <T extends object>(
     const { userData } = useActiveUser<ActiveUserType>();
     const UserId = userData?.activeId;
     const ObjectToFormData = ConvertToFormData;
+    const PrismaTypes = Prisma;
     const Utilities = {
       ...CRUUD,
       QClient,
@@ -32,6 +33,7 @@ const withUtilities = <T extends object>(
       ImageReset,
       ObjectToFormData,
       IsLoading,
+      PrismaTypes,
     };
     return <OriginalComponent {...props} Utilities={Utilities} />;
   };

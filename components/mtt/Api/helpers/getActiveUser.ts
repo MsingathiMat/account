@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { verifyToken } from "./verifyToken";
 
 export async function getActiveUser<T>() {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+  const cookieStore = await cookies();
+  const token =  cookieStore.get("token")?.value;
 
   if (token) {
     try {

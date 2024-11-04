@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { QueryClient } from "@tanstack/react-query";
 
 type UtilitiesProp = {
@@ -29,6 +30,7 @@ type UtilitiesProp = {
   ) => Promise<responseData<P> | null>;
 
   QClient: QueryClient;
+  PrismaTypes: typeof Prisma;
   toast: ({ ...props }: Toast) => {
     id: string;
     dismiss: () => void;

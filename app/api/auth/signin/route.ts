@@ -21,46 +21,39 @@ import { ActiveUserType } from "@/components/mtt/Types/MttTypes";
          );
        }
    
-       // Find the user by email
-    //    const ExistingUser = await SingletonPrisma.user.findFirst({ where: { email } });
+      //  Find the user by email
+       const ExistingUser = await SingletonPrisma.users.findFirst({ where: { email } });
    
-    //    if (!ExistingUser) {
-    //      return NextResponse.json(
-    //        { error: "Invalid email or password" },
-    //        { status: 401 }
-    //      );
-    //    }
+       if (!ExistingUser) {
+         return NextResponse.json(
+           { error: "Invalid email or password" },
+           { status: 401 }
+         );
+       }
    
-    //    // Compare the provided password with the hashed password in the database
-    //    const isMatch = await bcryptjs.compare(
-    //      password.trim(),
-    //      ExistingUser?.password?.trim() ?? ""
-    //    );
+       // Compare the provided password with the hashed password in the database
+       const isMatch = await bcryptjs.compare(
+         password.trim(),
+         ExistingUser?.password?.trim() ?? ""
+       );
    
-    //    if (!isMatch) {
-    //      return NextResponse.json(
-    //        { error: "Invalid email or password" },
-    //        { status: 401 }
-    //      );
-    //    }
+       if (!isMatch) {
+         return NextResponse.json(
+           { error: "Invalid email or password" },
+           { status: 401 }
+         );
+       }
    
      
-    //  const CookieTokenResponse = await CreateCookieToken<ActiveUserType >({
-    //    activeName:ExistingUser.name as string,
-    //    activeEmail: ExistingUser.email as string,
-    //    activeImagePath:ExistingUser.image as string,
-    //    activeId:ExistingUser.id,
-    //    activeRole:ExistingUser.role
-    //  })
+     const CookieTokenResponse = await CreateCookieToken<ActiveUserType >({
+       activeName:ExistingUser.name as string,
+       activeEmail: ExistingUser.email as string,
+       activeImagePath:ExistingUser.ProfileImage as string,
+       activeId:ExistingUser.UserId,
+       activeRole:ExistingUser.role
+     })
      
 
-      const CookieTokenResponse = await CreateCookieToken<ActiveUserType >({
-       activeName:"Msingathi",
-       activeEmail: "matthew@coded.test",
-       activeImagePath:"/me.jpg",
-       activeId:"Id00008",
-       activeRole:"ADMIN"
-     })
      
 
      return CookieTokenResponse

@@ -1,32 +1,34 @@
-import bcryptjs from "bcryptjs";
+
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import uuid4 from "uuid4";
 import SingletonPrisma from "@/components/mtt/Api/Prisma/singleton";
-import { CreateCookieToken } from "@/components/mtt/Api/CreateCookieToken";
-import { ActiveUserType } from "@/components/mtt/Types/MttTypes";
 
 export const POST = async (req: NextRequest) => {
   const data = await req.formData();
 
-  const name = data.get("name") as string | null;
-  const password = data.get("password") as string | null;
-  const email = data.get("email") as string | null;
-  const ProfileImage = data.get("ProfileImage") as File | null;
 
-  if (!name || !email || !ProfileImage || !password) {
+  const CompanyName = data.get("CompanyName") as string | null;
+  const UserId = data.get("UserId") as string | null;
+  const ContactPerson = data.get("ContactPerson") as string | null;
+  const TagLine = data.get("TagLine") as string | null;
+  const ContactNo = data.get("ContactNo") as string | null;
+  const Email = data.get("Email") as string | null;
+  const Logo = data.get("Logo") as File | null;
+
+  if (!CompanyName || ! ContactPerson || ! ContactNo ||  !Email || !Logo || !TagLine || !UserId   ) {
     return NextResponse.json({
-      error: "Name, email, password, and image must be supplied",
+      error: "Some UI inputs not received",
     });
   }
 
-  const FileName = ProfileImage.name;
+  const FileName = Logo.name;
   const fileExtension = FileName.split(".").pop();
 
   const Imagename = uuid4();
   const formData = new FormData();
 
-  formData.append("file", ProfileImage, `${Imagename}.${fileExtension}`);
+  formData.append("file", Logo, `${Imagename}.${fileExtension}`);
 
   let filePath = null;
   try {
@@ -71,36 +73,30 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: "No file path", status: 500 });
   }
 
-  const UserExist = await SingletonPrisma.users.findUnique({
-    where: { email },
+  const CompanyExist = await SingletonPrisma.companies.findUnique({
+    where: { Email },
   });
 
-  if (UserExist) {
-    return NextResponse.json({ error: "user exists", status: 500 });
+  if (CompanyExist) {
+    return NextResponse.json({ error: "Company exists", status: 500 });
   }
 
-  const UserPassword = await bcryptjs.hash(password, 10);
 
-  const ExistingUser = await SingletonPrisma.users.create({
+  const CreatedCompany = await SingletonPrisma.companies.create({
     data: {
-      name,
-      email,
-      password: UserPassword,
-      ProfileImage: filePath,
+    CompanyName,
+    UserId,
+    ContactPerson,
+    TagLine,
+    ContactNo,
+    Email,
+    Logo:filePath
+
     },
   });
 
-  if (!ExistingUser) {
+  if (!CreatedCompany) {
     return NextResponse.json({ message: "User not created", status: 500 });
   }
-
-  const CookieTokenResponse = await CreateCookieToken<ActiveUserType>({
-    activeName: ExistingUser.name as string,
-    activeEmail: ExistingUser.email as string,
-    activeImagePath: ExistingUser.ProfileImage as string,
-    activeId: ExistingUser.UserId,
-    activeRole: ExistingUser.role,
-  });
-
-  return CookieTokenResponse;
+return NextResponse.json(CreatedCompany,{status:201})
 };

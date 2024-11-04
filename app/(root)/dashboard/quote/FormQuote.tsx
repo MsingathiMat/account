@@ -4,9 +4,10 @@
     import React from "react";
     import MttForm, {
     
+      MtComboSearch,
         MttSelect,
       MttSubmit,
-      MttTextArea,
+    
       MttTextField,
   
     } from "@/components/mtt/components/mttForm/mttForm";
@@ -17,18 +18,35 @@
     import { useMutation } from "@tanstack/react-query";
     import withUtilities from "@/components/mtt/HOC/withUtilities";
     import { UtilitiesProp } from "@/components/mtt/Types/MttTypes";
-import MttArrowText from "@/components/mtt/components/MttArrowText";
+
     
     const OriginalForm = ({ Utilities }: { Utilities: UtilitiesProp }) => {
       // Declare FORM NAME or Table name
       const FormName = "User";
     
+
+      const newObg =[
+        {
+          value:"One Dime",
+          label:"One Dime",
+          id:"1"
+        },
+        {
+          value:"Vula Media",
+          label:"Fasi Funeral",
+          id:"2"
+        },
+        {
+          value:"Vula Media",
+          label:"Bright Star",
+          id:"3"
+        }
+      ]
       // Get(Destructure) all the methods that your form will need from  Utilities
       const {
         Create,
         toast,
-        MttImageFile,
-        MttImageDisplay,
+      
         ImageReset,
         ObjectToFormData,
         IsLoading,
@@ -37,12 +55,26 @@ import MttArrowText from "@/components/mtt/components/MttArrowText";
     
       // Create a FormSchema
       const FormSchema = z.object({
-        companyName: z.string().min(1, "Required"),
-        contactPerson: z.string().min(1, "Required"),
-        type: z.enum(["Company", "Individual"]),
-        contactNo: z.string().min(1, "Required"),
-        email: z.string().email({ message: "Not Valid" }),
+        itemName: z.string().min(1, "Required"),
+        itemType: z.enum(["Product", "Service"]),
+        quantity: z.number().optional(),
+        amount: z.number(),
+   
       
+      })  .superRefine((data, ctx) => {
+        // Check if itemType is "Product" and validate quantity accordingly
+        if (data.itemType === "Product") {
+          if (data.quantity === undefined || data.quantity <= 0) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["quantity"],
+              message: "Required CTX",
+            });
+          }
+        } else {
+         
+            FormMethods.setValue("quantity",undefined)
+        }
       });
     
       // Form Type
@@ -51,10 +83,10 @@ import MttArrowText from "@/components/mtt/components/MttArrowText";
       // FormMethods
       const FormMethods = useForm<FormType>({
         defaultValues: {
-            companyName: "",
-            contactPerson: "",
-            contactNo:"",
-          email: "",
+          itemName: "",
+          itemType: undefined,
+          quantity:0,
+          amount:0.0,
        
           
         },
@@ -103,14 +135,14 @@ import MttArrowText from "@/components/mtt/components/MttArrowText";
     
       const readOnly = FormMutation.isPending;
       const FormIsloading = FormMutation.isPending;
-    
+      const ItemType = FormMethods.watch("itemType")
       return (
         <div className=" mtt-Alpha p-4 w-fit rounded-md">
          
             <MttForm
          
-          
-          
+          debugMode
+       
               onSubmit={FormSubmit}
               Methods={FormMethods}
               className="  mtt-center gap-6 mt-2 !flex-col w-fit "
@@ -120,28 +152,42 @@ import MttArrowText from "@/components/mtt/components/MttArrowText";
                   <MttTextField
                     readOnly={readOnly}
                     Icon="user"
-                    name="companyName"
-                    label="Company Name"
+                    name="itemName"
+                    label="Item Name"
                     className=""
                   />
 
 <MttSelect
                 readOnly={readOnly}
-                name="type"
+                name="itemType"
                 label="Select Type"
                 Options={[
-                  { value: "Company", label: "Company" },
-                  { value: "Individual", label: "Individual" },
+                  { value: "Product", label: "Product" },
+                  { value: "Service", label: "Service" },
                 ]}
               />
-                  <MttTextField
+              
+              {
+
+                ItemType=="Product"?    <MttTextField
+                readOnly={readOnly}
+           type="number"
+                name="quantity"
+                label="Quantity"
+                className=""
+              />:null
+              }
+               
+
+               <MtComboSearch name="artistId" label="Artist" placeholder="Select Client" SelectValues={newObg as {value:string,label:string,id:string} []}/>
+  
+               <MttTextField
                     readOnly={readOnly}
-                    Icon="email"
-                    name="email"
-                    label="Company Email"
+               type="number"
+                    name="amount"
+                    label="Amount"
                     className=""
                   />
-               
            
 
               <IsLoading
@@ -163,7 +209,7 @@ import MttArrowText from "@/components/mtt/components/MttArrowText";
       );
     };
     
-    const FormAddClient = withUtilities(OriginalForm);
-    export default FormAddClient;
+    const FormAddItem = withUtilities(OriginalForm);
+    export default FormAddItem;
     
         

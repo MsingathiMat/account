@@ -32,7 +32,7 @@ export function MttSearchCombo({placeholder,className,SelectValues, Onselect, re
 
 
   const frameworks = SelectValues
-  const selectedLabel = frameworks.find((framework) => framework.id === selectedId)?.label || "Select Artist"
+  const selectedLabel = frameworks.find((framework) => framework.id === selectedId)?.label || placeholder
 
   // Filter frameworks by the label for searching, ensuring the label is defined
   const filteredFrameworks = frameworks.filter((framework) =>
@@ -46,26 +46,27 @@ export function MttSearchCombo({placeholder,className,SelectValues, Onselect, re
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between BORDER",className)}
+          className={cn("w-full text-[13px] font-normal justify-between mtt-BaseShadeHover5White group text-textPri rounded-md   h-InputHeight !border-input ",className)}
         >
           {selectedLabel}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command>
+        <Command className=" bg-BaseShadeWhite  rounded-md">
           <CommandInput 
-            placeholder={placeholder}
+            placeholder={"Search"}
             value={searchQuery}
             onValueChange={setSearchQuery}
+           
           />
           <CommandList>
-            <CommandEmpty     >No artist found</CommandEmpty>
-            <CommandGroup>
+            <CommandEmpty   >No value found</CommandEmpty>
+            <CommandGroup >
               {filteredFrameworks.map((framework) => (
                 <CommandItem
 
-            
+            className={cn(selectedId === framework.id ? "text-Pri" : "")}
                   key={framework.id}
                   value={framework.label} // Search by label, but use id for selection
                   onSelect={() => {
@@ -85,10 +86,10 @@ export function MttSearchCombo({placeholder,className,SelectValues, Onselect, re
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      selectedId === framework.id ? "opacity-100" : "opacity-0"
+                      selectedId === framework.id ? "opacity-100 text-Pri" : "opacity-0"
                     )}
                   />
-                  {framework.label}
+                  {framework.label} 
                 </CommandItem>
               ))}
             </CommandGroup>

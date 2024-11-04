@@ -34,14 +34,14 @@ const useMttMedia = () => {
             src={srcArray[name]?.src}
             alt=""
             className={cn(
-              "w-24 h-24    object-cover object-left-top  shadow-lg border-[1px] rounded-md border-input  shadow-md",
+              "w-full h-full   object-cover object-left-top  shadow-lg border-[1px] rounded-md border-input  shadow-md",
               className
             )}
           />
         ) : (
           <div
             className={cn(
-              " mtt-center  bg-BaseShade3 w-24 h-24  object-cover object-center rounded-md ",
+              " mtt-center w-full h-[100px] bg-BaseShade3   object-cover object-center rounded-md ",
               className
             )}
           >
