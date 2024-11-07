@@ -337,7 +337,9 @@ type IconType = "user" | "lock" | "telephone" | "mobile" | "address" | "email";
 function MttTextField({
   className,
   type = "textInput",
+  step,
   name,
+  min,
   label,
   placeholder,
   Icon,
@@ -350,8 +352,10 @@ function MttTextField({
   type?: TypeOfInput;
   Icon?: IconType;
   readOnly?: boolean;
+  min?:string;
+  step?:string;
 }) {
-  const TextfieldRef = useRef<HTMLInputElement | null>(null);
+
 
   const [focus, setFocus] = useState(false);
 
@@ -420,26 +424,22 @@ function MttTextField({
             readOnly={readOnly}
             type={type}
             id={name}
-            {...register(name, {
-              required: { value: true, message: "Required" },
-            })}
+          step={step?"0.01":"1"}
+          min={min}
             placeholder={placeholder}
             className={cn(
               " placeholder:text-gray-300 w-full min-w-[200px] mtt-input mtt-borderFocus mtt-border  h-InputHeight  ",
               `${className} ${Icon ? "pl-10" : ""}`
             )}
             onChange={(e) => {
-              if (type == "number") {
+              if (type == "number" ) {
                 setValue(name, parseInt(e.target.value));
               } else {
                 setValue(name, e.target.value);
               }
             }}
             ref={(e) => {
-              // register(name).ref(e);
-
-              // Register the input
-              TextfieldRef.current = e;
+              register(name).ref(e);
             }}
             onFocus={() => {
               setFocus(true);

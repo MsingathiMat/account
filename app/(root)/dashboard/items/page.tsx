@@ -2,7 +2,7 @@ import React from 'react'
 import { MttTabContainer, MttTabContent, MttTabList, MttTabTrigger } from '@/components/mtt/components/MttTabs'
 
 
-import FormAddItem from './FormItem'
+import FormAddItem from './FormAddItem'
 import TableClients from './TableClients'
 const page = () => {
   return (

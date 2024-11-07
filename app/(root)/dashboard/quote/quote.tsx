@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import withUtilities from '@/components/mtt/HOC/withUtilities';
 import { UtilitiesProp } from '@/components/mtt/Types/MttTypes';
+import LiftOfitemsSelect from '@/components/AppComponents/ListOfSelects/ListOfItemSelect';
 
 const newObg = [
   { value: 'One Dime', label: 'One Dime', id: '1' },
@@ -100,7 +101,7 @@ QTNO: 00005
           className='w-[250px]'
         />
 
- 
+<LiftOfitemsSelect/>
 
         {/* Invoice Items Table */}
         <div className="overflow-x-auto w-full mtt-Alpha">

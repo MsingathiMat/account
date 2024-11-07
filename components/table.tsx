@@ -13,7 +13,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import React from "react";
 
 import { UtilitiesProp } from "@/components/mtt/Types/MttTypes";
-import { MutationModels, QueryModels } from "@/components/mtt/config/RQconfig";
+import { MutationModels, QueryModels } from "@/components/mtt/config/ReactQueryConfig";
 import MttImage from "@/components/mtt/components/MttImage";
 import { MttTable } from "@/components/mtt/components/MttTable";
 import withUtilities from "@/components/mtt/HOC/withUtilities";

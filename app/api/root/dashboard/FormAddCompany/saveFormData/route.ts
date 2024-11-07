@@ -7,6 +7,7 @@ import SingletonPrisma from "@/components/mtt/Api/Prisma/singleton";
 export const POST = async (req: NextRequest) => {
   const data = await req.formData();
 
+  const params =  req.nextUrl.searchParams
 
   const CompanyName = data.get("CompanyName") as string | null;
   const UserId = data.get("UserId") as string | null;

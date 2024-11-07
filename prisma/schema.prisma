@@ -43,7 +43,7 @@ model Companies {
 }
 
 model Quotations {
-  status      Status @default(CREATED)
+  status      DocStatus @default(CREATED)
   QuotationId String @unique @default(uuid())
   UserId      String
   user        Users? @relation(fields: [UserId], references: [UserId])
@@ -53,7 +53,7 @@ model Quotations {
 
 model Invoices {
   InvoiceId String @unique @default(uuid())
-  status    Status @default(CREATED)
+  status    DocStatus @default(CREATED)
   UserId    String
 
   user Users? @relation(fields: [UserId], references: [UserId])
@@ -63,22 +63,34 @@ model Invoices {
 
 model Items {
   ItemId String @unique @default(uuid())
+  ItemName String @unique
+ItemType String
+Description String
+ItemStatus ItemStatus
+Quantity Int
+Amount Decimal
+
   UserId String
 
   user Users?   @relation(fields: [UserId], references: [UserId])
-  Type ItemType @default(SERVICE)
+  Type ItemTypeEnum @default(SERVICE)
     createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
-enum Status {
+enum ItemStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum DocStatus {
   CREATED
   PARTIAL
   CLOSED
   VOID
 }
 
-enum ItemType {
+enum ItemTypeEnum {
   PRODUCT
   SERVICE
 }

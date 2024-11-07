@@ -15,7 +15,7 @@ import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import withUtilities from "@/components/mtt/HOC/withUtilities";
 import { ActiveUserType, UtilitiesProp } from "@/components/mtt/Types/MttTypes";
 import useActiveUser from "@/components/mtt/Hooks/useActiveUser";
-import { MutationModels, QueryModels } from "@/components/mtt/config/RQconfig";
+import { MutationModels, QueryModels } from "@/components/mtt/config/ReactQueryConfig";
 import { Prisma } from "@prisma/client";
 import { MttSearchCombo } from "@/components/mtt/components/mttSearchCombo";
 
@@ -35,7 +35,13 @@ const [SelectValues, SetSelectValues] = useState([{}])
   useEffect(() => {
     if (userData?.activeId) {
       FormMethods.setValue("UserId", userData.activeId);
+     
     }
+
+    if(data){
+      FormMethods.setValue("FileName",data[0].Logo)
+    }
+    
   }, [userData]);
   const {
     Create,
@@ -49,21 +55,27 @@ const [SelectValues, SetSelectValues] = useState([{}])
     QClient,
   } = Utilities;
 
+  const [IsUpdating,setIsupdating] = useState(false)
   // Create a FormSchema
   const FormSchema = z.object({
     UserId: z.string().min(1, "Required"),
+    OldFileName:z.string(),
+    CompanyId:IsUpdating?z.string().min(1,"Required"):z.any().optional(),
     CompanyName: z.string().min(1, "Required"),
     ContactPerson: z.string().min(1, "Required"),
     Type: z.enum(["Company", "Individual"]),
     ContactNo: z.string().min(1, "Required"),
     TagLine: z.string().min(1, "Required"),
     Email: z.string().email({ message: "Not Valid" }),
-    Logo: z.instanceof(File, { message: "Required" }),
-  });
+    Logo: IsUpdating?z.any().optional():z.instanceof(File,{message:"Required"})
+  })
 
+  
   // Form Type
   type FormType = z.infer<typeof FormSchema>;
+  const [defaultValues, setDefaultValues]= useState<FormType | null>(null)
 
+ 
   // FormMethods
   const FormMethods = useForm<FormType>({
     defaultValues: {
@@ -78,6 +90,7 @@ const [SelectValues, SetSelectValues] = useState([{}])
     resolver: zodResolver(FormSchema),
     mode: "all",
   });
+
 
   //Form Submit Method
   const FormSubmit: SubmitHandler<FormType> = (data) => {
@@ -97,28 +110,32 @@ const FormQuery = useQuery({
 
 const {data, isPending:SlelectValuePending} = FormQuery
 
-console.log(data)
+
 useEffect(()=>{
+
 
 
   if(data){
 
- 
+    setDefaultValues(data[0])
     data.map((CompanyData)=>{
   
     
-        SetSelectValues([...SelectValues,{value:CompanyData.CompanyName,label:CompanyData.CompanyName,id:CompanyData.CompanyId}])
+        SetSelectValues([{value:"",label:"Reset Form",id:""},...SelectValues,{value:CompanyData.CompanyName,label:CompanyData.CompanyName,id:CompanyData.CompanyId}])
 
     })
-  
+   
   }
-},[data])
+},[SlelectValuePending])
 
   const FormMutation = useMutation({
     mutationKey:[MutationModels.Companies.MutationKey],
     mutationFn: async ({ formData }: { formData: FormData }) => {
       //Create has been supplied by HOC. It comes from MttFetch
-      return await Create("/api/root/dashboard/FormAddCompany/", formData);
+      return await Create(
+        IsUpdating?"/api/root/dashboard/FormAddCompany/UpdateFormData/": "/api/root/dashboard/FormAddCompany/", 
+        
+        formData);
     },
     onError: () => {
       //toast has been supplied by HOC. It comes from Shadcn
@@ -137,6 +154,8 @@ useEffect(()=>{
       // Resert MttImage - This clears input images on the UI
       ImageReset("Logo");
 
+      FormQuery.refetch()
+      FormMethods.reset(defaultValues as FormType)
       //toast has been supplied by HOC. It comes from Shadcn
       toast({
         title: "SUCCESS",
@@ -157,8 +176,36 @@ useEffect(()=>{
 <IsLoading isLoading={SlelectValuePending}>
         <MttSearchCombo
         
-        returnAValue
-        Onselect={(val=>alert(val))}
+        
+        Onselect={((val)=>{ 
+      
+          if(val=="a238131f-8411-4170-87e6-187996fad640"){
+            ImageReset("Logo")
+            FormMethods.reset(defaultValues as FormType)
+
+            FormMethods.setValue("CompanyId",val)
+     
+if(data){
+  FormMethods.setValue("FileName",data[0].Logo)
+}
+
+          setIsupdating(true)
+          }else{
+
+            setIsupdating(false)
+            ImageReset("Logo")
+            FormMethods.reset({
+              CompanyName: "",
+              ContactPerson: "",
+              
+              ContactNo: "",
+              Email: "",
+              TagLine: "",
+              Logo: undefined,
+            })
+          }
+        })}
+          
           placeholder="Choose Company"
           SelectValues={
             SelectValues as { value: string; label: string; id: string }[]
@@ -170,6 +217,7 @@ useEffect(()=>{
         <div className=" mtt-Alpha p-4 w-fit rounded-md">
       
       <MttForm
+debugMode
         onSubmit={FormSubmit}
         Methods={FormMethods}
         className="  mtt-center gap-6 mt-2 !flex-col w-fit "
@@ -225,12 +273,12 @@ useEffect(()=>{
           </div>
 
           <div className=" mtt-center gap-4 !flex-col w-[250px]">
-            <MttImageDisplay name="Logo" className=" h-[130px] " />
+            <MttImageDisplay wathcedValue={FormMethods.watch("Logo")} name="Logo" className=" h-[130px] " />
             <MttImageFile name="Logo" label="Company Logo" />
           </div>
         </div>
         <IsLoading className="w-full mtt-center" isLoading={FormIsloading}>
-          <MttSubmit>Add</MttSubmit>
+          <MttSubmit>{IsUpdating?"Update Data":"Save "}</MttSubmit>
         </IsLoading>
       </MttForm>
     </div>

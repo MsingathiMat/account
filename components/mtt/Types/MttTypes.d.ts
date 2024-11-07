@@ -41,8 +41,9 @@ type UtilitiesProp = {
   MttImageDisplay: ({
     className,
     name,
-  }: UploadedImageProps & {
-    name: string;
+    wathcedValue
+  }: {
+    wathcedValue?:string,className?:string,name: string;
   }) => JSX.Element;
   ImageReset: (name: string) => void;
   ObjectToFormData:<T extends object>(data: T) => FormData;

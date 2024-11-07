@@ -4,8 +4,8 @@ export const QueryModels = {
   Companies: {
     QueryKey: "Company",
   },
-  Artist: {
-    QueryKey: "Artist",
+  Items: {
+    QueryKey: "Items",
   },
   Song: {
     QueryKey: "Song",
@@ -23,9 +23,9 @@ export const MutationModels = {
     MutationKey: "mtCompany",
     Dependants:[QueryModels.Companies.QueryKey],
   },
-  Artist: {
-    MutationKey: "mtArtist",
-    Dependants: QueryModels.Artist.QueryKey,
+  Items: {
+    MutationKey: "mtItems",
+    Dependants: QueryModels.Items.QueryKey,
   },
   Song: {
     MutationKey: "mtSong",

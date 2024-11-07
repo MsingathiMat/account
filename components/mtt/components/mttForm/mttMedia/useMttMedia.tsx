@@ -1,3 +1,4 @@
+"use client"
 import React, { ChangeEvent, useState } from "react";
 
 import { Controller, useFormContext } from "react-hook-form";
@@ -5,7 +6,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { ImageUp } from "lucide-react";
 import LabelWrapper from "../LabelWrapper";
-import { MttImageFileProps } from "@/components/mtt/Types/MttTypes";
+import { MttImageFileProps, UploadedImageProps } from "@/components/mtt/Types/MttTypes";
 
 
 const useMttMedia = () => {
@@ -26,7 +27,8 @@ const useMttMedia = () => {
   const MttImageDisplay = ({
     className,
     name,
-  }: UploadedImageProps & { name: string }) => {
+    wathcedValue
+  }:{className?:string, name: string,wathcedValue?:string }) => {
     return (
       <>
         {srcArray[name]?.src ? (
@@ -38,7 +40,14 @@ const useMttMedia = () => {
               className
             )}
           />
-        ) : (
+        ) :wathcedValue? <img
+        src={wathcedValue}
+        alt=""
+        className={cn(
+          "w-full h-full   object-cover object-left-top  shadow-lg border-[1px] rounded-md border-input  shadow-md",
+          className
+        )}
+      /> :(
           <div
             className={cn(
               " mtt-center w-full h-[100px] bg-BaseShade3   object-cover object-center rounded-md ",
@@ -61,14 +70,14 @@ const useMttMedia = () => {
     label,
     readOnly, // Added the readOnly prop
   }:MttImageFileProps) => {
-    const { control } = useFormContext();
-  
+   
+const {control}= useFormContext()
     return (
       <div className="mtt-center flex-col gap-1 w-full">
         <Controller
           name={name}
           control={control}
-          rules={{ required: { value: true, message: "Select required" } }}
+         
           render={({ field, formState: { errors } }) => (
             <LabelWrapper
               name={name}
@@ -105,8 +114,12 @@ const useMttMedia = () => {
               <input
                 hidden
                 id={name}
+
+              
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   if (!readOnly && e.target.files && e.target.files.length > 0) {
+                    
+                    reset(name)
                     field.onChange(e.target.files[0]);
   
                     updateSrcArray(
@@ -124,6 +137,8 @@ const useMttMedia = () => {
           )}
         />
       </div>
+
+    
     );
   };
   
