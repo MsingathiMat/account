@@ -1,7 +1,7 @@
 "use client"
 import React from 'react';
 import MttForm, {
-  MtComboSearch,
+  MttComboSearch,
   MttSelect,
   MttSubmit,
   MttTextField,
@@ -13,6 +13,11 @@ import { Plus } from 'lucide-react';
 import withUtilities from '@/components/mtt/HOC/withUtilities';
 import { UtilitiesProp } from '@/components/mtt/Types/MttTypes';
 import LiftOfitemsSelect from '@/components/AppComponents/ListOfSelects/ListOfItemSelect';
+import MttpopulatedSelect from '@/components/mtt/components/mttForm/mttPopulatedSelect';
+import GenerateSelectValues from '@/components/mtt/Helpers/GenerateSelectValues';
+import { useQuery } from '@tanstack/react-query';
+import { QueryModels } from '@/components/mtt/config/ReactQueryConfig';
+import { Items } from '@prisma/client';
 
 const newObg = [
   { value: 'One Dime', label: 'One Dime', id: '1' },
@@ -27,8 +32,9 @@ const FormSchema = z.object({
     z.object({
       itemName: z.string().min(1, 'Required'),
       itemType: z.enum(['Product', 'Service']),
+      Description: z.string().min(1, 'Required'),
       quantity: z.number().optional(),
-      amount: z.number().positive(),
+      amount: z.number(),
     })
   ),
 });
@@ -42,10 +48,11 @@ const Quote = ({ Utilities }: { Utilities: UtilitiesProp }) => {
     QClient,
     ObjectToFormData,
     IsLoading,
+    Read,
     ImageReset,
   } = Utilities;
 
-  const formMethods = useForm<FormType>({
+  const FormMethods = useForm<FormType>({
     defaultValues: {
       client: '',
       items: [{ itemName: '', itemType: 'Product', quantity: 1, amount: 0 }],
@@ -53,11 +60,21 @@ const Quote = ({ Utilities }: { Utilities: UtilitiesProp }) => {
     resolver: zodResolver(FormSchema),
   });
 
-  const { control, handleSubmit, watch } = formMethods;
+  const { control, handleSubmit, watch } = FormMethods;
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'items',
   });
+
+  const CompQuery = useQuery({
+    queryKey:[QueryModels.Items.QueryKey],
+    queryFn: async ()=>{
+
+        return Read<Items[]>("/api/root/dashboard/listOf/items/")
+    }
+ })
+
+ const {data, isPending} = CompQuery
 
   const items = watch('items');
   const sumTotal = items.reduce((sum, item) => sum + (item.quantity || 0) * item.amount, 0);
@@ -77,6 +94,8 @@ const Quote = ({ Utilities }: { Utilities: UtilitiesProp }) => {
     //   });
   };
 
+
+  console.log(FormMethods.watch("items")[0].itemName)
   return (
     <div className=" mtt-Alpha w-full mtt-center !flex-col !items-start !justify-start pt-8">
     <div className=' px-[38px] mtt-center !justify-between w-full'>
@@ -88,20 +107,24 @@ QTNO: 00005
   </h3>
     </div>
       <MttForm
+  
+ 
         onSubmit={onSubmit}
-        Methods={formMethods}
+        Methods={FormMethods}
         className="space-y-4 w-full "
       >
      
-        <MtComboSearch
+        <MttComboSearch
           name="client"
           label="Select Client"
           placeholder="Choose Client"
           SelectValues={newObg as { value: string; label: string; id: string }[]}
           className='w-[250px]'
         />
+{/* 
+<LiftOfitemsSelect IdColumn='ItemId' NameColumn='ItemName' Placeholder='Select Item' endpoint='/api/root/dashboard/listOf/items/'/> */}
 
-<LiftOfitemsSelect/>
+
 
         {/* Invoice Items Table */}
         <div className="overflow-x-auto w-full mtt-Alpha">
@@ -121,27 +144,52 @@ QTNO: 00005
                 <tr key={field.id}>
                   <td className="p-2">
                    
-                  <MtComboSearch
+<IsLoading className=' mtt-center' isLoading={isPending}>
+
+{
+        data&&            <MttComboSearch
+
+        className=' w-[150px]'
+        callBack={(val)=>{
+
+          const selectedItem = data.find((item) => item.ItemId === val);
+          if (selectedItem) {
+            FormMethods.setValue(`items.${index}.Description`, selectedItem.Description);
+            FormMethods.setValue(`items.${index}.amount`, parseInt(selectedItem.Amount.toString()));
+          }
+        }}
            name={`items.${index}.itemName`}
                       label="Item Name"
           placeholder="Choose Client"
-          SelectValues={newObg as { value: string; label: string; id: string }[]}
+          SelectValues={ GenerateSelectValues(
+           {
+            IdColumn:'ItemId' ,
+            NameColumn:'ItemName' ,
+            data:data
+           }
+          
+          )}
         />
+      }
+</IsLoading>
+
+
                   
                   </td>
                   <td className="p-2">
           
           <MttTextField
-            name={`items.${index}.quantity`}
-  
+            name={`items.${index}.Description`}
+  className=' border-none text-gray-500'
             label="Description"
-            readOnly={false}
+            readOnly={true}
           />
      
       </td>
                   <td className="p-2">
           
                       <MttTextField
+                      className=' !w-[60px]'
                         name={`items.${index}.quantity`}
                         type="number"
                         label="Quantity"
@@ -152,8 +200,9 @@ QTNO: 00005
                   <td className="p-2">
                     <MttTextField
                       name={`items.${index}.amount`}
+                       className=' border-none text-gray-500'
                       type="number"
-                      label="Amount"
+                      label=""
                       readOnly={false}
                     />
                   </td>

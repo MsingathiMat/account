@@ -419,7 +419,7 @@ function MttTextField({
   return (
     <div className=" mtt-center flex-col gap-1 w-full">
       <LabelWrapper name={name} error={errors?.[name]?.message} label={label}>
-        <div className="relative">
+        <div className="relative w-full">
           <Input
             readOnly={readOnly}
             type={type}
@@ -428,7 +428,7 @@ function MttTextField({
           min={min}
             placeholder={placeholder}
             className={cn(
-              " placeholder:text-gray-300 w-full min-w-[200px] mtt-input mtt-borderFocus mtt-border  h-InputHeight  ",
+              " placeholder:text-gray-300 w-full  mtt-input mtt-borderFocus mtt-border  h-InputHeight  ",
               `${className} ${Icon ? "pl-10" : ""}`
             )}
             onChange={(e) => {
@@ -454,20 +454,20 @@ function MttTextField({
   );
 }
 
-function MtComboSearch({
+function MttComboSearch({
   className,
 
   name,
   label,
   placeholder,
-
+callBack,
   SelectValues,
 }: {
   name: string;
   placeholder: string;
   label: string;
   className?: string;
-
+  callBack?:(val:string)=>void;
   Icon?: IconType;
   readOnly?: boolean;
   SelectValues: { value: string; label: string; id: string }[];
@@ -489,7 +489,11 @@ function MtComboSearch({
             placeholder={placeholder}
             className={className}
             SelectValues={SelectValues}
-            Onselect={OnSelect}
+            Onselect={callBack?(val)=>{
+
+              OnSelect(val)
+              callBack(val)
+            }:OnSelect}
           />
         </div>
       </LabelWrapper>
@@ -1053,6 +1057,6 @@ export {
   MttRadioGroup,
   MttCheckBox,
   MttSubmitAlternative,
-  MtComboSearch,
+  MttComboSearch,
   MttTimePicker,
 };

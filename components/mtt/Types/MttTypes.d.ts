@@ -163,5 +163,8 @@ type ActiveUserType = {
   
     [K in keyof T]:T[K] extends string?number:T[K]
   }
+
+
+  type SelectValueTypes =  {value:string,label:string,id:string}
   
   

@@ -4,7 +4,7 @@
     import React from "react";
     import MttForm, {
     
-      MtComboSearch,
+      MttComboSearch,
         MttSelect,
       MttSubmit,
     
@@ -180,7 +180,7 @@ import LiftOfitemsSelect from "@/components/AppComponents/ListOfSelects/ListOfIt
               }
                
 
-               <MtComboSearch name="artistId" label="Artist" placeholder="Select Client" SelectValues={newObg as {value:string,label:string,id:string} []}/>
+               <MttComboSearch name="artistId" label="Artist" placeholder="Select Client" SelectValues={newObg as {value:string,label:string,id:string} []}/>
   
 
                <MttTextField
