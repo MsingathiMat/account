@@ -7,8 +7,8 @@ export const QueryModels = {
   Items: {
     QueryKey: "Items",
   },
-  Song: {
-    QueryKey: "Song",
+  Clients: {
+    QueryKey: "Clients",
   },
   Events: {
     QueryKey: "Events",
@@ -27,9 +27,9 @@ export const MutationModels = {
     MutationKey: "mtItems",
     Dependants: QueryModels.Items.QueryKey,
   },
-  Song: {
-    MutationKey: "mtSong",
-    Dependants: QueryModels.Song.QueryKey,
+  Clients: {
+    MutationKey: "mtClients",
+    Dependants: QueryModels.Clients.QueryKey,
   },
   Event: {
     MutationKey: "Event",

@@ -18,28 +18,10 @@ import GenerateSelectValues from '@/components/mtt/Helpers/GenerateSelectValues'
 import { useQuery } from '@tanstack/react-query';
 import { QueryModels } from '@/components/mtt/config/ReactQueryConfig';
 import { Items } from '@prisma/client';
+import { MttSearchCombo } from '@/components/mtt/components/mttSearchCombo';
 
-const newObg = [
-  { value: 'One Dime', label: 'One Dime', id: '1' },
-  { value: 'Vula Media', label: 'Fasi Funeral', id: '2' },
-  { value: 'Vula Media', label: 'Bright Star', id: '3' },
-];
 
-// Schema for form validation
-const FormSchema = z.object({
-  client: z.string().min(1, 'Required'),
-  items: z.array(
-    z.object({
-      itemName: z.string().min(1, 'Required'),
-      itemType: z.enum(['Product', 'Service']),
-      Description: z.string().min(1, 'Required'),
-      quantity: z.number().optional(),
-      amount: z.number(),
-    })
-  ),
-});
 
-type FormType = z.infer<typeof FormSchema>;
 
 const Quote = ({ Utilities }: { Utilities: UtilitiesProp }) => {
   const {
@@ -52,9 +34,25 @@ const Quote = ({ Utilities }: { Utilities: UtilitiesProp }) => {
     ImageReset,
   } = Utilities;
 
+  // Schema for form validation
+const FormSchema = z.object({
+  ClientId: z.string().min(1, 'Required'),
+  UserId: z.string().min(1, 'Required'),
+  items: z.array(
+    z.object({
+      itemName: z.string().min(1, 'Required'),
+      itemType: z.enum(['Product', 'Service']),
+      Description: z.string().min(1, 'Required'),
+      quantity: z.number().optional(),
+      amount: z.number(),
+    })
+  ),
+});
+
+type FormType = z.infer<typeof FormSchema>;
   const FormMethods = useForm<FormType>({
     defaultValues: {
-      client: '',
+     
       items: [{ itemName: '', itemType: 'Product', quantity: 1, amount: 0 }],
     },
     resolver: zodResolver(FormSchema),
@@ -66,6 +64,14 @@ const Quote = ({ Utilities }: { Utilities: UtilitiesProp }) => {
     name: 'items',
   });
 
+  const ClientQuery = useQuery({
+    queryKey:[QueryModels.Clients.QueryKey],
+    queryFn: async ()=>{
+
+        return Read<Items[]>("/api/root/dashboard/listOf/clients/")
+    }
+ })
+
   const CompQuery = useQuery({
     queryKey:[QueryModels.Items.QueryKey],
     queryFn: async ()=>{
@@ -74,8 +80,10 @@ const Quote = ({ Utilities }: { Utilities: UtilitiesProp }) => {
     }
  })
 
- const {data, isPending} = CompQuery
 
+ const {data, isPending} = CompQuery
+ console.log(data)
+ const {data:ClientData, isPending:ClientPending} = ClientQuery
   const items = watch('items');
   const sumTotal = items.reduce((sum, item) => sum + (item.quantity || 0) * item.amount, 0);
 
@@ -108,19 +116,37 @@ QTNO: 00005
     </div>
       <MttForm
   
- 
+ debugMode
         onSubmit={onSubmit}
         Methods={FormMethods}
         className="space-y-4 w-full "
       >
      
-        <MttComboSearch
-          name="client"
-          label="Select Client"
+     
+
+                           
+<IsLoading className=' mtt-center mr-auto' isLoading={ClientPending}>
+
+{
+        ClientData&&            <MttComboSearch
+
+        className=' w-[150px]'
+    
+      name="ClientId"
+      label='Client'
+       
           placeholder="Choose Client"
-          SelectValues={newObg as { value: string; label: string; id: string }[]}
-          className='w-[250px]'
+          SelectValues={ GenerateSelectValues(
+           {
+            IdColumn:'ClientId' ,
+            NameColumn:'ClientName' ,
+            data:ClientData
+           }
+          
+          )}
         />
+      }
+</IsLoading>
 {/* 
 <LiftOfitemsSelect IdColumn='ItemId' NameColumn='ItemName' Placeholder='Select Item' endpoint='/api/root/dashboard/listOf/items/'/> */}
 
@@ -159,7 +185,7 @@ QTNO: 00005
           }
         }}
            name={`items.${index}.itemName`}
-                      label="Item Name"
+                      label=""
           placeholder="Choose Client"
           SelectValues={ GenerateSelectValues(
            {
@@ -181,7 +207,7 @@ QTNO: 00005
           <MttTextField
             name={`items.${index}.Description`}
   className=' border-none text-gray-500'
-            label="Description"
+            label=""
             readOnly={true}
           />
      
@@ -192,7 +218,7 @@ QTNO: 00005
                       className=' !w-[60px]'
                         name={`items.${index}.quantity`}
                         type="number"
-                        label="Quantity"
+                        label=""
                         readOnly={false}
                       />
                  
@@ -200,7 +226,7 @@ QTNO: 00005
                   <td className="p-2">
                     <MttTextField
                       name={`items.${index}.amount`}
-                       className=' border-none text-gray-500'
+                       className=' border-none text-gray-500 w-[100px]'
                       type="number"
                       label=""
                       readOnly={false}
@@ -209,12 +235,12 @@ QTNO: 00005
                   <td className="p-2">
                     ${(items[index].quantity || 1) * items[index].amount}
                   </td>
-                  <td className="p-2">
+                  <td className="p-2 w-[50px]">
                     {fields.length > 1 && (
                       <button
                         type="button"
                         onClick={() => remove(index)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-Pri hover:text-red-700"
                       >
                         ✕
                       </button>
