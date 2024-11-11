@@ -99,7 +99,7 @@ const Path = usePathname();
 
   useEffect(() => {
     if (navItems && navItems.length > 0) {
-      const Active = navItems.find((val) => `${val.basePath}${val.path}` === Path);
+      const Active = navItems.find((val) => `${val.basePath}${val.path}` === Path || Path.startsWith(`${val.basePath}${val.path}`));
       if (!Active) {
         alert("You are using MttNav without route configuration, please look for the file 'NavList.tsx' and set your base path");
       } else {

@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import MttForm, {
   MttSubmit,
   MttTextField,
 } from "@/components/mtt/components/mttForm/mttForm";
 
 import { SubmitHandler, useForm } from "react-hook-form";
-import z, { custom } from "zod";
+import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import withUtilities from "@/components/mtt/HOC/withUtilities";
@@ -23,6 +23,7 @@ const OriginalForm = ({ Utilities }: { Utilities: UtilitiesProp }) => {
   // Get(Destructure) all the methods that your form will need from  Utilities
   const { Create, toast, ImageReset, IsLoading, QClient } = Utilities;
 
+  const [RedirectLoading,setRedirectLoading] = useState();
   // Create a FormSchema
   const FormSchema = z.object({
     email: z.string().email({ message: "Not Valid" }),
@@ -73,7 +74,7 @@ const OriginalForm = ({ Utilities }: { Utilities: UtilitiesProp }) => {
         description: `${FormName} created successfully`,
       });
 
-      MttRedirect("/dashboard")
+      MttRedirect("/dashboard",setRedirectLoading)
     },
   });
 
@@ -85,6 +86,7 @@ const OriginalForm = ({ Utilities }: { Utilities: UtilitiesProp }) => {
   return (
     <div className=" mtt-Alpha1 p-4 w-fit rounded-md ">
       <MttForm
+      isLoading={RedirectLoading}
         title="Sign In"
         indicator
         onSubmit={FormSubmit}

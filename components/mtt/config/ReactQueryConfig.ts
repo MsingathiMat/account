@@ -10,11 +10,11 @@ export const QueryModels = {
   Clients: {
     QueryKey: "Clients",
   },
-  Events: {
-    QueryKey: "Events",
+  Quotations: {
+    QueryKey: "Quotations",
   },
-  EventsActiveEvent: {
-    QueryKey: "EventsActiveIvent",
+  QuotationById: {
+    QueryKey: "QuotationById",
   },
 };
 
@@ -31,14 +31,15 @@ export const MutationModels = {
     MutationKey: "mtClients",
     Dependants: QueryModels.Clients.QueryKey,
   },
-  Event: {
-    MutationKey: "Event",
-    Dependants: [QueryModels.Events.QueryKey,QueryModels.EventsActiveEvent.QueryKey],
+  Quotations: {
+    MutationKey: "mtQuotations",
+    Dependants: [QueryModels.Quotations.QueryKey,QueryModels.QuotationById.QueryKey],
   },
-  EventUpdateStatus: {
-    MutationKey: "EventUpdateStatus",
-    Dependants: QueryModels.Events.QueryKey,
+  QuotationChat: {
+    MutationKey: "mtQuotationChat",
+    Dependants: [QueryModels.Quotations.QueryKey,QueryModels.QuotationById.QueryKey],
   },
+ 
 };
 
 

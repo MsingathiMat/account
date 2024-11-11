@@ -55,6 +55,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox, CheckboxIndicator } from "@radix-ui/react-checkbox";
 import LabelWrapper from "./LabelWrapper";
 import { MttSearchCombo } from "../mttSearchCombo";
+import IsLoading from "../Isloading";
 
 
 type ChildClass = {
@@ -66,7 +67,7 @@ type OptionType = { value: string; label: string };
 
 export default function MttForm<T extends FieldValues>({
   Methods,
-
+  isLoading,
   children,
   className,
   title,
@@ -81,6 +82,7 @@ export default function MttForm<T extends FieldValues>({
   className?: string;
   title?: string;
   indicator?: boolean;
+  isLoading?:boolean;
 }) {
 
   const [position, setPosition] = useState({ x: 607, y: -300 });
@@ -192,7 +194,9 @@ export default function MttForm<T extends FieldValues>({
   const totalMttComponents = countMttComponents(children);
 
   return (
-    <FormProvider {...Methods}>
+   <IsLoading isLoading={!!isLoading} className="w-full ">
+
+<FormProvider {...Methods}>
       <form
         onSubmit={Methods.handleSubmit(onSubmit)}
         autoComplete="off"
@@ -218,7 +222,7 @@ export default function MttForm<T extends FieldValues>({
 
         {watchVals ? (
       <div 
-      className=" z-10 absolute translate-y-1/2 h-[400px] w-[400px] p-2 shadow-lg mtt-base rounded-md"
+      className=" z-10 absolute translate-y-1/2 h-[400px] w-[400px] p-2 shadow-lg bg-background border border-input rounded-md"
       
       onMouseDown={handleMouseDown}
       onMouseMove={isDragging ? handleMouseMove : undefined}
@@ -251,7 +255,7 @@ export default function MttForm<T extends FieldValues>({
           Methods.formState.errors ? (
 
             <div 
-            className=" z-10 absolute translate-y-1/2 h-[400px]  w-[400px] p-2 shadow-lg mtt-base rounded-md"
+            className=" z-10 absolute translate-y-1/2 h-[400px]  w-[400px] p-2 shadow-lg mtt-base rounded-md bg-background border border-input"
             
             onMouseDown={handleMouseDown2}
             onMouseMove={isDragging2 ? handleMouseMove2 : undefined}
@@ -329,6 +333,7 @@ export default function MttForm<T extends FieldValues>({
 }
       </form>
     </FormProvider>
+   </IsLoading>
   );
 }
 

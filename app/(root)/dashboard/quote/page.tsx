@@ -15,17 +15,17 @@ const page = () => {
 <MttTabList className="">
 
   <MttTabTrigger className=" " value="Users">
-    Add Client
+    Add Quotation
   </MttTabTrigger>
   <MttTabTrigger className="" value="List">
-    User List
+    Quotations 
   </MttTabTrigger>
 
 </MttTabList>
 
 <MttTabContent className=" pt-8" value="Users">
 
-{/* <FormAddItem/> */}
+
 <Quote/>
 
 </MttTabContent>

@@ -20,6 +20,7 @@ model Users {
   Invoices      Invoices[]
   Quotations    Quotations[]
   Clients       Clients[]
+  QuoteChats QuoteChats[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
@@ -41,15 +42,42 @@ model Companies {
   updatedAt     DateTime    @updatedAt
 }
 
+
 model Quotations {
   status      DocStatus @default(CREATED)
   QuotationId String    @unique @default(uuid())
   UserId      String
-  user        Users?    @relation(fields: [UserId], references: [UserId])
+  user        Users   @relation(fields: [UserId], references: [UserId])
+  ClientId String
+  clients Clients @relation(fields: [ClientId], references: [ClientId])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  QuotationDetails QuotationDetails[]
+  QuoteChats QuoteChats[]
 }
 
+
+model QuoteChats {
+
+  QuoteChatId Int @unique @default(autoincrement())
+  UserId String
+  Users Users @relation(fields: [UserId],references: [UserId])
+  QuotationId String
+  Quotations Quotations @relation(fields: [QuotationId],references: [QuotationId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  message String
+}
+model QuotationDetails {
+  QdId Int @unique @default(autoincrement())
+QuotationId String
+  Quote Quotations @relation(fields: [QuotationId],references: [QuotationId])
+ItemId String
+Items Items @relation(fields: [ItemId],references: [ItemId])
+Quantity Int
+Amount Decimal
+
+}
 model Invoices {
   InvoiceId String    @unique @default(uuid())
   status    DocStatus @default(CREATED)
@@ -71,6 +99,8 @@ model Items {
 
   UserId String
 
+  QuotationDetails QuotationDetails[]
+
   user      Users?       @relation(fields: [UserId], references: [UserId])
   Type      ItemTypeEnum @default(SERVICE)
   createdAt DateTime     @default(now())
@@ -86,6 +116,7 @@ model Clients {
   CompanyEmail  String  @unique
 
   UserId String
+  Quotations Quotations[]
 
   user Users? @relation(fields: [UserId], references: [UserId])
 

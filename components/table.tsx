@@ -118,7 +118,7 @@ const OriginalComponent = ({ Utilities }: { Utilities: UtilitiesProp }) => {
   };
 
   const TableQuery = useQuery({
-    queryKey: [QueryModels.Events.QueryKey],
+    queryKey: [QueryModels.Clients.QueryKey],
     queryFn: async () => {
       return await Read<TypeEvent[]>("/api/tables/getAllEvents");
     },
@@ -127,13 +127,13 @@ const OriginalComponent = ({ Utilities }: { Utilities: UtilitiesProp }) => {
   });
 
   const TableMutationActivate = useMutation({
-    mutationKey: [MutationModels.EventUpdateStatus.MutationKey],
+    mutationKey: [MutationModels.Clients.MutationKey],
     mutationFn: async ({ EventId }: { EventId: string }) => {
       return await Create("/api/tables/TableEvents/UpdateStatus/", { EventId });
     },
     onSettled: () => {
       QClient.invalidateQueries({
-        queryKey: [MutationModels.Event.Dependants],
+        queryKey: [MutationModels.Clients.Dependants],
       });
     },
     onSuccess: () => {
