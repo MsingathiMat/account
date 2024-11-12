@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import SingletonPrisma from "@/components/mtt/Api/Prisma/singleton";
 
 export const GET = async (req: NextRequest) => {
+  const DynamicRoute = req.nextUrl.searchParams.get('DynamicRoute') || null;
   try {
     // Fetch all items from the database
     const allClients = await SingletonPrisma.clients.findMany();

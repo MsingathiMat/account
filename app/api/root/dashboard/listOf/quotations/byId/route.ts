@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import SingletonPrisma from "@/components/mtt/Api/Prisma/singleton";
 
 export const GET = async (req: NextRequest) => {
+  const DynamicRoute = req.nextUrl.searchParams.get('DynamicRoute') || null;
   try {
     // Extract the ID from the request URL
     const QuotationId = req.nextUrl.searchParams.get('QuotationId') || null;
